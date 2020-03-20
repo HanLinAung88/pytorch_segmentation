@@ -4,6 +4,7 @@ import numpy as np
 import os
 import torch
 import cv2
+import json
 from PIL import Image
 from glob import glob
 from torch.utils.data import Dataset
@@ -46,9 +47,12 @@ class Coral(BaseDataLoader):
     def __init__(self, data_dir, batch_size, split, crop_size=None, base_size=None, scale=True, num_workers=1, val=False,
                     shuffle=False, flip=False, rotate=False, blur= False, augment=False, val_split= None, return_id=False):
 
-        #TODO: Initialize to our dataset
-        self.MEAN = [0.43931922, 0.41310471, 0.37480941]
-        self.STD = [0.24272706, 0.23649098, 0.23429529]
+        # RUN data/extract_mean_std.py whenever you have a new dataset to update mean and std
+        with open(os.path.join(data_dir, 'mean_std_coral.json')) as f:
+            mean_std = json.load(f)
+          
+        self.MEAN = mean_std["mean"] 
+        self.STD = mean_std["std"] 
 
         kwargs = {
             'root': data_dir,
